@@ -77,7 +77,7 @@ class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
     case DisclosureMarketablePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
-    case DisclosureIdentifyArrangementPage => //
+    case DisclosureIdentifyArrangementPage =>
       _ => _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
 
     case DisclosureDetailsPage =>

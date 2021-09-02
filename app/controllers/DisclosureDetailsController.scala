@@ -88,14 +88,10 @@ class DisclosureDetailsController @Inject() (
         "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
         "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
-        "userCanSubmit" -> userCanSubmit(request.userAnswers,
-                                         id,
-                                         disclosureDetails.disclosureType,
-                                         disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
-        ),
-        "displaySectionOptional" -> displaySectionOptional(disclosureDetails.disclosureType, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
-        "backLink"               -> backLink,
-        "summaryLink"            -> summaryLink
+        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails),
+        "displaySectionOptional"           -> displaySectionOptional(disclosureDetails),
+        "backLink"                         -> backLink,
+        "summaryLink"                      -> summaryLink
       )
       renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
 

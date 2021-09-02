@@ -17,8 +17,8 @@
 package helpers
 
 import models.UserAnswers
-import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted, Restricted}
 import models.reporter.RoleInArrangement
@@ -103,11 +103,11 @@ object TaskListHelper {
       case _               => url
     }
 
-  def displaySectionOptional(disclosureType: DisclosureType, firstInitialDisclosureWasMarketable: Boolean)(implicit messages: Messages): String =
-    disclosureType match {
-      case Dac6add if firstInitialDisclosureWasMarketable =>
+  def displaySectionOptional(disclosureDetails: DisclosureDetails)(implicit messages: Messages): String =
+    (disclosureDetails.disclosureType, disclosureDetails.initialDisclosureMA, disclosureDetails.firstInitialDisclosureMA) match {
+      case (Dac6add, _, Some(true)) =>
         messages("disclosureDetails.optional")
-      case Dac6rep if firstInitialDisclosureWasMarketable =>
+      case (Dac6rep, false, Some(true)) =>
         messages("disclosureDetails.optional")
       case _ =>
         ""
@@ -122,10 +122,12 @@ object TaskListHelper {
       case _ => false
     }
 
-  def userCanSubmit(ua: UserAnswers, id: Int, disclosureType: DisclosureType, firstInitialDisclosureWasMarketable: Boolean): Boolean = {
+  def userCanSubmit(ua: UserAnswers, id: Int, disclosureDetails: DisclosureDetails): Boolean = {
 
     val submissionContainsTaxpayer: Boolean = ua.get(TaxpayerLoopPage, id).fold(false)(_.nonEmpty) ||
       ua.get(RoleInArrangementPage, id).fold(false)(_.equals(RoleInArrangement.Taxpayer))
+
+    val firstInitialDisclosureWasMarketable = disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
 
     val mandatoryCompletion =
       if (submissionContainsTaxpayer) {
@@ -135,7 +137,7 @@ object TaskListHelper {
       }
 
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
-      disclosureType match {
+      disclosureDetails.disclosureType match {
         case DisclosureType.Dac6add if firstInitialDisclosureWasMarketable =>
           mandatoryCompletion
         case DisclosureType.Dac6rep if firstInitialDisclosureWasMarketable =>

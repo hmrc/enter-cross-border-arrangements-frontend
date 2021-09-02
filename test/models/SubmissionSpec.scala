@@ -451,6 +451,45 @@ class SubmissionSpec extends ModelSpecBase {
         submission.displayAssociatedEnterprises must be(true)
 
       }
+
+      "must return false if reporter is intermediary & firstInitialMA is true when doing a replace of the new" in {
+
+        val reporterDetailsAsIntermediary = ReporterDetails(None, Some(validOrganisation), Some(ReporterLiability("intermediary")))
+
+        val validDisclosureDetails = DisclosureDetails(disclosureName = "DisclosureName",
+                                                       disclosureType = DisclosureType.Dac6rep,
+                                                       initialDisclosureMA = false,
+                                                       firstInitialDisclosureMA = Some(true)
+        )
+
+        val userAnswers = UserAnswers("id")
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
+          .set(DisclosureDetailsPage, 0, validDisclosureDetails)
+          .success
+          .value
+          .set(ReporterDetailsPage, 0, reporterDetailsAsIntermediary)
+          .success
+          .value
+          .set(IntermediaryLoopPage, 0, validIntermediaries)
+          .success
+          .value
+          .set(AffectedLoopPage, 0, validAffectedPersons)
+          .success
+          .value
+          .set(HallmarkDetailsPage, 0, validHallmarkDetails)
+          .success
+          .value
+          .set(ArrangementDetailsPage, 0, validArrangementDetails)
+          .success
+          .value
+
+        val submission = Submission(userAnswers, 0, "enrolmentID")
+
+        submission.displayAssociatedEnterprises must be(false)
+
+      }
     }
   }
 }

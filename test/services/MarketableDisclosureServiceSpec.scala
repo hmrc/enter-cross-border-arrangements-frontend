@@ -492,5 +492,41 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       Await.result(marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(userAnswers), 10.seconds) mustBe false
 
     }
+
+    "must return true when disclosing an replacement arrangement and first initial disclosure has MA = true" in {
+
+      val firstDisclosure = SubmissionDetails(
+        enrolmentID = "enrolmentID",
+        submissionTime = LocalDateTime.now(),
+        fileName = "submission",
+        arrangementID = Some("GBA123"),
+        disclosureID = Some("GBD321"),
+        importInstruction = "dac6new",
+        initialDisclosureMA = true,
+        messageRefId = "messageRefID"
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6rep)
+        .success
+        .value
+        .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA123", "GBD321"))
+        .success
+        .value
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosure))
+
+      when(mockHistoryConnector.getSubmissionDetailForDisclosure(any())(any()))
+        .thenReturn(Future.successful(firstDisclosure))
+
+      Await.result(marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(userAnswers), 10.seconds) mustBe true
+
+    }
   }
 }

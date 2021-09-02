@@ -61,7 +61,7 @@ class SummaryController @Inject() (
         case _                => throw new RuntimeException("Unable to retrieve details from disclosure")
       }
 
-      if (userCanSubmit(request.userAnswers, id, disclosureDetails.disclosureType, disclosureDetails.firstInitialDisclosureMA.getOrElse(false))) {
+      if (userCanSubmit(request.userAnswers, id, disclosureDetails)) {
         val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
         val submission = Submission(request.userAnswers, id, request.enrolmentID)

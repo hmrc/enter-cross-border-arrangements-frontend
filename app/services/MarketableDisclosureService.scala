@@ -90,19 +90,16 @@ class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector)
         historyConnector.getSubmissionDetailForDisclosure(userSuppliedBothIDs(ua).disclosureID).flatMap {
           submissionDetail =>
             //Check last previous submission import Type
-            if (submissionDetail.importInstruction.toUpperCase.contains("ADD")) {
-              historyConnector
-                .retrieveFirstDisclosureForArrangementID(
-                  submissionDetail.arrangementID.getOrElse(
-                    throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers")
-                  )
+
+            historyConnector
+              .retrieveFirstDisclosureForArrangementID(
+                submissionDetail.arrangementID.getOrElse(
+                  throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers")
                 )
-                .flatMap {
-                  initialDac6New => Future.successful(initialDac6New.initialDisclosureMA)
-                }
-            } else {
-              Future.successful(false)
-            }
+              )
+              .flatMap {
+                initialDac6New => Future.successful(initialDac6New.initialDisclosureMA)
+              }
         }
 
       case _ =>
