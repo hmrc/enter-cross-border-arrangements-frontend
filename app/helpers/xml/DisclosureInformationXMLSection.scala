@@ -83,4 +83,29 @@ case class DisclosureInformationXMLSection(submission: Submission) {
         </DisclosureInformation>
         }.getOrElse(NodeSeq.Empty)
     }
+
+}
+
+object DisclosureInformationXMLSection {
+
+  val dummyDisclosureInformation: NodeSeq =
+    <DisclosureInformation>
+      <ImplementingDate>2018-06-25</ImplementingDate>
+      <Summary>
+        <Disclosure_Name>xxxxxx</Disclosure_Name>
+        <Disclosure_Description>xxxxxxxxx</Disclosure_Description>
+      </Summary>
+      <NationalProvision>xxxxxxxxxx</NationalProvision>
+      <Amount currCode="GBP">0</Amount>
+      <ConcernedMSs>
+        <ConcernedMS>GB</ConcernedMS>
+      </ConcernedMSs>
+      <MainBenefitTest1>false</MainBenefitTest1>
+      <Hallmarks>
+        <ListHallmarks>
+          <Hallmark>DAC6D1Other</Hallmark>
+        </ListHallmarks>
+        <DAC6D1OtherInfo>xxxxx</DAC6D1OtherInfo>
+      </Hallmarks>
+    </DisclosureInformation>
 }

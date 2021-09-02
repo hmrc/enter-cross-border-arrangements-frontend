@@ -351,4 +351,46 @@ object GeneratedXMLExamples {
        |    </DAC6Disclosures>
        |</DAC6_Arrangement>""".stripMargin
 
+  val xmlForDel: String =
+    s"""<DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
+       |    <Header>
+       |        <MessageRefId>GBXADAC0001122345004duplicateforSpixked</MessageRefId>
+       |        <Timestamp>2020-05-14T17:10:00</Timestamp>
+       |    </Header>
+       |    <ArrangementID>GBA20200908YBOXYX</ArrangementID>
+       |    <DAC6Disclosures>
+       |        <DisclosureID>GBD20200914EKGXYX</DisclosureID>
+       |        <DisclosureImportInstruction>DAC6DEL</DisclosureImportInstruction>
+       |        <Disclosing>
+       |            <ID>
+       |                <Organisation>
+       |                    <OrganisationName>X</OrganisationName>
+       |                    <ResCountryCode>GB</ResCountryCode>
+       |                </Organisation>
+       |            </ID>
+       |        </Disclosing>
+       |        <InitialDisclosureMA>false</InitialDisclosureMA>
+       |        <DisclosureInformation>
+       |            <ImplementingDate>2018-06-25</ImplementingDate>
+       |            <Summary>
+       |                <Disclosure_Name>xxxxxx</Disclosure_Name>
+       |                <Disclosure_Description>xxxxxxxxx</Disclosure_Description>
+       |            </Summary>
+       |            <NationalProvision>xxxxxxxxxx</NationalProvision>
+       |            <Amount currCode="GBP">0</Amount>
+       |            <ConcernedMSs>
+       |                <ConcernedMS>GB</ConcernedMS>
+       |            </ConcernedMSs>
+       |            <MainBenefitTest1>false</MainBenefitTest1>
+       |            <Hallmarks>
+       |                <ListHallmarks>
+       |                    <Hallmark>DAC6D1Other</Hallmark>
+       |                </ListHallmarks>
+       |                <DAC6D1OtherInfo>xxxxx</DAC6D1OtherInfo>
+       |            </Hallmarks>
+       |        </DisclosureInformation>
+       |    </DAC6Disclosures>
+       |</DAC6_Arrangement>
+       ||""".stripMargin
+
 }

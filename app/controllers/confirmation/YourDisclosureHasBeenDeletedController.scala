@@ -50,18 +50,20 @@ class YourDisclosureHasBeenDeletedController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
       request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
-        case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), _)) =>
+        case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), xml)) =>
           val emailMessage = request.contacts
             .flatMap(_.emailMessage)
             .getOrElse(throw new RuntimeException("Contact email details are missing"))
 
+          // TODO remove xm after test
           val json = Json.obj(
             "disclosureID"       -> disclosureID,
             "arrangementID"      -> arrangementID,
             "messageRefid"       -> messageRefID,
             "homePageLink"       -> linkToHomePageText(appConfig.discloseArrangeLink),
             "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
-            "emailMessage"       -> emailMessage
+            "emailMessage"       -> emailMessage,
+            "xml"                -> xml
           )
 
           for {

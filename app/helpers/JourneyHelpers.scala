@@ -66,7 +66,7 @@ object JourneyHelpers {
         )
     }
 
-  @deprecated
+  @deprecated("", "31/12/20")
   def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
     def containsCountry(country: Country): Boolean =
       value.get("country") match {
@@ -128,7 +128,7 @@ object JourneyHelpers {
         loopDetails => loopDetails.map(_.whichCountry.isDefined).head
       )
 
-  @deprecated
+  @deprecated("", "31/12/20")
   def getCountry[A](userAnswers: UserAnswers, id: Int, index: Int): Option[Country] = for {
     loopPage    <- userAnswers.get(IndividualLoopPage, id)
     loopDetails <- loopPage.lift(index)

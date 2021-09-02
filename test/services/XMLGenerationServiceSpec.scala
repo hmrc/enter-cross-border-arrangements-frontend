@@ -18,8 +18,9 @@ package services
 
 import base.{MockServiceApp, SpecBase}
 import helpers.data.ValidUserAnswersForSubmission.{userAnswersForIndividual, userAnswersForOrganisation}
-import helpers.xml.GeneratedXMLExamples
+import helpers.xml.{DisclosureInformationXMLSection, GeneratedXMLExamples}
 import models.Submission
+import models.disclosure.{DisclosureDetails, DisclosureType}
 
 class XMLGenerationServiceSpec extends SpecBase with MockServiceApp {
 
@@ -45,5 +46,13 @@ class XMLGenerationServiceSpec extends SpecBase with MockServiceApp {
       }
     }
 
+    "must must create disclosure information with dummy values when import instruction (disclosure type) is Dac6del " in {
+
+      val disclosureDetails: DisclosureDetails =
+        DisclosureDetails("disclosureName", DisclosureType.Dac6del, Some("GBA20200908YBOXYX"), Some("GBD20200914EKGXYX"))
+      val submission = Submission("enrolmentID", disclosureDetails)
+      val result     = xmlGenerationService.createDisclosureInformationSection(submission)
+      prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(DisclosureInformationXMLSection.dummyDisclosureInformation)
+    }
   }
 }
