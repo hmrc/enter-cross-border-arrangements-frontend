@@ -16,21 +16,21 @@
 
 package controllers
 
-import connectors.HistoryConnector
 import controllers.actions._
 import helpers.DateHelper.getSummaryTimestamp
 import helpers.TaskListHelper
-import helpers.TaskListHelper.{isInitialDisclosureMarketable, userCanSubmit}
+import helpers.TaskListHelper.userCanSubmit
 import models.ReporterOrganisationOrIndividual.Organisation
+import models.disclosure.DisclosureType
 import models.reporter.RoleInArrangement.Intermediary
 import models.taxpayer.Taxpayer
 import models.{Submission, UserAnswers}
+import pages.disclosure.DisclosureDetailsPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{Html, SummaryList}
 import utils.CreateDisplayRows._
@@ -47,8 +47,6 @@ class SummaryController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  historyConnector: HistoryConnector,
-  sessionRepository: SessionRepository,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -58,63 +56,68 @@ class SummaryController @Inject() (
     implicit request =>
       val backtoDisclosuresLink = controllers.routes.DisclosureDetailsController.onPageLoad(id).url
 
-      isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap {
-        isInitialDisclosureMarketable =>
-          if (userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable)) {
-            val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
+      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id) match {
+        case Some(disclosure) => disclosure
+        case _                => throw new RuntimeException("Unable to retrieve details from disclosure")
+      }
 
-            val submission = Submission(request.userAnswers, id, request.enrolmentID)
+      if (userCanSubmit(request.userAnswers, id, disclosureDetails)) {
+        val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
-            val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map {
-              ent =>
-                ent.copy(associatedTaxpayers =
-                  ent.associatedTaxpayers.map(
-                    txname => getTaxpayerNameFromID(txname, submission.taxpayers).getOrElse(txname)
-                  )
-                )
-            }
+        val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-            renderer
-              .render(
-                "summary.njk",
-                Json.obj(
-                  "disclosureList" -> submission.disclosureDetails.createDisplayRows,
-                  "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(
-                    a => a.createDisplayRows
-                  ),
-                  "reporterDetails"              -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "residentCountryDetails"       -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "roleDetails"                  -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "displayHallmarksSection"      -> displayHallmarksSection(submission, request.userAnswers, id, isInitialDisclosureMarketable),
-                  "hallmarksList"                -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "taxpayersList"                -> submission.taxpayers.map(_.createDisplayRows),
-                  "taxpayerUpdateRow"            -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "enterprisesList"              -> enterprisesWithDisplayTaxnames.map(_.createDisplayRows),
-                  "enterprisesUpdateRow"         -> Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "intermediaryList"             -> submission.intermediaries.map(_.createDisplayRows),
-                  "intermediaryUpdateRow"        -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "affectedList"                 -> submission.affectedPersons.map(_.createDisplayRows),
-                  "affectedUpdateRow"            -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-                  "backtoDisclosuresLink"        -> backtoDisclosuresLink,
-                  "displayAssociatedEnterprises" -> submission.displayAssociatedEnterprises,
-                  "timeStamp"                    -> getTimeStamp
-                )
+        val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map {
+          ent =>
+            ent.copy(associatedTaxpayers =
+              ent.associatedTaxpayers.map(
+                txname => getTaxpayerNameFromID(txname, submission.taxpayers).getOrElse(txname)
               )
-              .map(Ok(_))
-          } else {
-            throw new RuntimeException("Submission not ready")
-          }
+            )
+        }
+
+        renderer
+          .render(
+            "summary.njk",
+            Json.obj(
+              "disclosureList" -> submission.disclosureDetails.createDisplayRows,
+              "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(
+                a => a.createDisplayRows
+              ),
+              "reporterDetails"        -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "residentCountryDetails" -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "roleDetails"            -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "displayHallmarksSection" -> displayHallmarksSection(submission,
+                                                                   disclosureDetails.disclosureType,
+                                                                   disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
+              ),
+              "hallmarksList"                -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "taxpayersList"                -> submission.taxpayers.map(_.createDisplayRows),
+              "taxpayerUpdateRow"            -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+              "enterprisesList"              -> enterprisesWithDisplayTaxnames.map(_.createDisplayRows),
+              "enterprisesUpdateRow"         -> Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+              "intermediaryList"             -> submission.intermediaries.map(_.createDisplayRows),
+              "intermediaryUpdateRow"        -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+              "affectedList"                 -> submission.affectedPersons.map(_.createDisplayRows),
+              "affectedUpdateRow"            -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+              "backtoDisclosuresLink"        -> backtoDisclosuresLink,
+              "displayAssociatedEnterprises" -> submission.displayAssociatedEnterprises,
+              "timeStamp"                    -> getTimeStamp
+            )
+          )
+          .map(Ok(_))
+      } else {
+        throw new RuntimeException("Submission not ready")
       }
   }
 
-  private def displayHallmarksSection(submission: Submission, userAnswers: UserAnswers, id: Int, marketable: Boolean): Boolean =
-    TaskListHelper.isDisplaySectionOptional(userAnswers, id, marketable) match {
-      case true =>
-        submission.hallmarkDetails match {
-          case Some(_) => true
-          case _       => false
-        }
-      case _ => true
+  private def displayHallmarksSection(submission: Submission, disclosureType: DisclosureType, marketable: Boolean): Boolean =
+    if (TaskListHelper.isDisplaySectionOptional(disclosureType, marketable)) {
+      submission.hallmarkDetails match {
+        case Some(_) => true
+        case _       => false
+      }
+    } else {
+      true
     }
 
   private def getTimeStamp()(implicit messages: Messages) = {

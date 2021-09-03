@@ -17,11 +17,10 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.HistoryConnector
 import controllers.actions._
 import controllers.exceptions.DiscloseDetailsAlreadySentException
 import controllers.mixins.DefaultRouting
-import helpers.TaskListHelper.{isInitialDisclosureMarketable, _}
+import helpers.TaskListHelper._
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted, Restricted}
 import models.reporter.RoleInArrangement.Taxpayer
@@ -57,7 +56,6 @@ class DisclosureDetailsController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   contactRetrievalAction: ContactRetrievalAction,
-  historyConnector: HistoryConnector,
   frontendAppConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   navigator: NavigatorForDisclosure,
@@ -75,26 +73,28 @@ class DisclosureDetailsController @Inject() (
 
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
-      isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap {
-        isInitialDisclosureMarketable =>
-          val json = Json.obj(
-            "id"                               -> id,
-            "arrangementID"                    -> arrangementMessage,
-            "hallmarksTaskListItem"            -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
-            "arrangementDetailsTaskListItem"   -> arrangementsItem(request.userAnswers, ArrangementStatusPage, id, isInitialDisclosureMarketable),
-            "reporterDetailsTaskListItem"      -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
-            "relevantTaxpayerTaskListItem"     -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
-            "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
-            "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
-            "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
-            "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
-            "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable),
-            "displaySectionOptional"           -> displaySectionOptional(request.userAnswers, id, isInitialDisclosureMarketable),
-            "backLink"                         -> backLink,
-            "summaryLink"                      -> summaryLink
-          )
-          renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
-      }
+      val json = Json.obj(
+        "id"                    -> id,
+        "arrangementID"         -> arrangementMessage,
+        "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
+        "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers,
+                                                             ArrangementStatusPage,
+                                                             id,
+                                                             disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
+        ),
+        "reporterDetailsTaskListItem"      -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
+        "relevantTaxpayerTaskListItem"     -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
+        "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
+        "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
+        "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
+        "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
+        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails),
+        "displaySectionOptional"           -> displaySectionOptional(disclosureDetails),
+        "backLink"                         -> backLink,
+        "summaryLink"                      -> summaryLink
+      )
+      renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
+
   }
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {

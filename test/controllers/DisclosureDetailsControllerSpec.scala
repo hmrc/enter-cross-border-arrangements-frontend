@@ -127,7 +127,6 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
         .set(DisclosureDetailsPage, 1, disclosureDetails)
         .success
         .value
-      println("C'MON " + userAnswers)
 
       retrieveUserAnswersData(userAnswers)
 
@@ -149,12 +148,6 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
-        .thenReturn(Future.successful(firstDisclosureSubmissionDetails))
-
-      when(mockHistoryConnector.searchDisclosures(any())(any()))
-        .thenReturn(Future.successful(submissionHistory))
 
       val disclosureDetails = DisclosureDetails(
         disclosureName = "",
@@ -181,8 +174,6 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-      verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
-      verify(mockHistoryConnector, times(1)).searchDisclosures(any())(any())
 
       templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
     }

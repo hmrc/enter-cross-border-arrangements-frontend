@@ -17,7 +17,7 @@
 package models.disclosure
 
 import controllers.exceptions.DisclosureInformationIsMissingException
-import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
+import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.{
   DisclosureImportInstructionInvalidError,
   DisclosureInitialMarketableArrangementInvalidError,
@@ -44,14 +44,6 @@ case class DisclosureDetails(
 
   def withIds(arrangementID: String, disclosureID: String): DisclosureDetails = copy(arrangementID = Option(arrangementID), disclosureID = Option(disclosureID))
 
-  def withInitialDisclosureMA(firstInitialDisclosureMA: Option[Boolean]): DisclosureDetails =
-    copy(initialDisclosureMA = (disclosureType, firstInitialDisclosureMA) match {
-      case (Dac6add, _)           => false
-      case (Dac6rep, None)        => throw new DisclosureInformationIsMissingException("Missing first InitialDisclosureMA flag for a replace")
-      case (Dac6rep, Some(value)) => value
-      case _                      => initialDisclosureMA
-    })
-
   def validate: Either[SubmissionError, DisclosureDetails] =
     for {
       _ <- Either.cond(Option(disclosureName).exists(_.nonEmpty), disclosureName, DisclosureNameEmptyError)
@@ -67,7 +59,7 @@ object DisclosureDetails {
     .orElse(Some(DisclosureDetails("")))
   private def getDisclosureName(userAnswers: UserAnswers)       = userAnswers.getBase(DisclosureNamePage)
   private def getDisclosureType(userAnswers: UserAnswers)       = userAnswers.getBase(DisclosureTypePage)
-  private def getDisclosureMarketable(userAnswers: UserAnswers) = userAnswers.getBase(DisclosureMarketablePage).orElse(Some(false))
+  private def getDisclosureMarketable(userAnswers: UserAnswers) = userAnswers.getBase(DisclosureMarketablePage)
 
   private def getDisclosureIdentifyArrangement(userAnswers: UserAnswers) = userAnswers
     .getBase(DisclosureIdentifyArrangementPage)
@@ -75,6 +67,7 @@ object DisclosureDetails {
   private def getReplaceOrDeleteDisclosure(userAnswers: UserAnswers): Option[ReplaceOrDeleteADisclosure] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage)
   private def getInitialDisclosureMA(userAnswers: UserAnswers): Boolean                                  = userAnswers.getBase(InitialDisclosureMAPage).getOrElse(false)
   private def getMessageRefId(userAnswers: UserAnswers)                                                  = userAnswers.getBase(MessageRefIDPage).orElse(None)
+  private def getFirstInitialDisclosureMA(userAnswers: UserAnswers)                                      = userAnswers.getBase(FirstInitialDisclosureMAPage).orElse(None)
 
   def build(userAnswers: UserAnswers): DisclosureDetails =
     getDisclosureDetails(userAnswers)
@@ -115,6 +108,10 @@ object DisclosureDetails {
       .map {
         details =>
           details.copy(messageRefId = getMessageRefId(userAnswers))
+      }
+      .map {
+        firstInitialDisclosureMA =>
+          firstInitialDisclosureMA.copy(firstInitialDisclosureMA = getFirstInitialDisclosureMA(userAnswers))
       }
       .getOrElse(throw new DisclosureInformationIsMissingException("Unable to build disclose details"))
 
