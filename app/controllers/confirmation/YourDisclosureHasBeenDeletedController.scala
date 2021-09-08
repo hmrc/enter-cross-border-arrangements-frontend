@@ -62,8 +62,7 @@ class YourDisclosureHasBeenDeletedController @Inject() (
             "messageRefid"       -> messageRefID,
             "homePageLink"       -> linkToHomePageText(appConfig.discloseArrangeLink),
             "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
-            "emailMessage"       -> emailMessage,
-            "xml"                -> xml
+            "emailMessage"       -> emailMessage
           )
 
           for {
