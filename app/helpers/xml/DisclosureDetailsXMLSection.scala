@@ -17,7 +17,7 @@
 package helpers.xml
 
 import models.Submission
-import models.disclosure.DisclosureDetails
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.disclosure.DisclosureType._
 
 import scala.xml.{Elem, NodeSeq}
@@ -39,7 +39,10 @@ case class DisclosureDetailsXMLSection(submission: Submission) {
     <DisclosureImportInstruction>{disclosure.disclosureType.toString.toUpperCase}</DisclosureImportInstruction>
 
   def buildInitialDisclosureMA: Elem =
-    <InitialDisclosureMA>{disclosure.initialDisclosureMA}</InitialDisclosureMA>
+    disclosure.disclosureType match {
+      case DisclosureType.Dac6del => <InitialDisclosureMA>false</InitialDisclosureMA>
+      case _                      => <InitialDisclosureMA>{disclosure.initialDisclosureMA}</InitialDisclosureMA>
+    }
 
   def buildArrangementID: NodeSeq =
     disclosure.disclosureType match {

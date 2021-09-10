@@ -54,20 +54,25 @@ class XMLGenerationService @Inject() (
             {disclosureSection.buildDisclosureID}
             {disclosureSection.buildDisclosureImportInstruction}
             {reporterSection.buildDisclosureDetails}
-            {disclosureSection.buildInitialDisclosureMA}
-            {createPartiesSection(submission, Option(reporterSection))}
+            {disclosureSection.buildInitialDisclosureMA ++ createPartiesSection(submission)}
+            {createDisclosureInformationSection(submission)}
           </DAC6Disclosures>
         </DAC6_Arrangement>
     }).fold(Failure(_), identity)
 
-  def createPartiesSection(submission: Submission, reporterSection: Option[ReporterXMLSection]): NodeSeq =
+  def createPartiesSection(submission: Submission): NodeSeq =
     submission.getDisclosureType match {
       case DisclosureType.Dac6del => NodeSeq.Empty
       case _ =>
         RelevantTaxPayersXMLSection(submission).buildRelevantTaxpayers ++
           IntermediariesXMLSection(submission).buildIntermediaries ++
-          AffectedXMLSection(submission).buildAffectedPersons ++
-          DisclosureInformationXMLSection(submission).buildDisclosureInformation
+          AffectedXMLSection(submission).buildAffectedPersons
+    }
+
+  def createDisclosureInformationSection(submission: Submission): NodeSeq =
+    submission.getDisclosureType match {
+      case DisclosureType.Dac6del if !submission.getInitialDisclosureMA => DisclosureInformationXMLSection.dummyDisclosureInformation
+      case _                      => DisclosureInformationXMLSection(submission).buildDisclosureInformation
     }
 
   def createAndValidateXmlSubmission(submission: Submission)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] =

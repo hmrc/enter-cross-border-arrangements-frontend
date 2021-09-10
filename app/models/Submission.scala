@@ -54,6 +54,8 @@ case class Submission(enrolmentID: String,
 
   val getDisclosureType: DisclosureType = disclosureDetails.disclosureType
 
+  val getInitialDisclosureMA: Boolean = disclosureDetails.initialDisclosureMA
+
   //Hide when MA = True, Reporter = intermediary, No relevant tax payers
   def displayAssociatedEnterprises(): Boolean =
     disclosureDetails.disclosureType match {
