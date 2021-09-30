@@ -17,8 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
+
 import javax.inject.Inject
-import models.AddressLookup
+import models.{AddressLookup, LookupAddressByPostcode}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Reads
@@ -31,16 +32,13 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
   def addressLookupByPostcode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 
-    val addressLookupUrl: String = s"${config.addressLookUpUrl}/v2/uk/addresses"
-    val urlParams                = Seq("postcode" -> postCode)
+    val addressLookupUrl: String = s"${config.addressLookUpUrl}/lookup"
 
     implicit val reads: Reads[Seq[AddressLookup]] = AddressLookup.addressesLookupReads
 
-    http.GET[HttpResponse](
-      url = addressLookupUrl,
-      queryParams = urlParams,
-      headers = Seq("X-Hmrc-Origin" -> "DAC6")
-    ) flatMap {
+    val lookupAddressByPostcode = LookupAddressByPostcode(postCode, None)
+
+    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "DAC6")) flatMap {
       case response if response.status equals OK =>
         Future.successful(
           response.json
@@ -52,6 +50,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
       case response =>
         val message = s"Address Lookup failed with status ${response.status} Response body: ${response.body}"
         Future.failed(new HttpException(message, response.status))
+
     } recover {
       case e: Exception =>
         logger.error("Exception in Address Lookup", e)
