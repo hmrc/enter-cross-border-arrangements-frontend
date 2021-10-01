@@ -72,7 +72,7 @@ class XMLGenerationService @Inject() (
   def createDisclosureInformationSection(submission: Submission): NodeSeq =
     submission.getDisclosureType match {
       case DisclosureType.Dac6del if !submission.getInitialDisclosureMA => DisclosureInformationXMLSection.dummyDisclosureInformation
-      case _                      => DisclosureInformationXMLSection(submission).buildDisclosureInformation
+      case _                                                            => DisclosureInformationXMLSection(submission).buildDisclosureInformation
     }
 
   def createAndValidateXmlSubmission(submission: Submission)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] =
