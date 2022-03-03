@@ -198,4 +198,13 @@ trait ModelGenerators {
     } yield IndexedSeq(LoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK, doYouKnowUTR, taxNumbersUK))
   }
 
+  implicit val arbitraryEmailRequest: Arbitrary[EmailRequest] = Arbitrary {
+    for {
+      to          <- arbitrary[List[String]]
+      id          <- arbitrary[String]
+      contactName <- arbitrary[Map[String, String]]
+
+    } yield EmailRequest(to, id, contactName)
+  }
+
 }

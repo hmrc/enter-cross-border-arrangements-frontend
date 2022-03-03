@@ -90,6 +90,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val sendEmailUrl: String = configuration.get[Service]("microservice.services.email").baseUrl
 
+  lazy val emailFailureAlertMessage = "The email could not be sent to the EMAIL service"
+
   lazy val timeoutSeconds: String   = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 }
