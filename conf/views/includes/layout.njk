@@ -1,11 +1,10 @@
 {% extends "govuk/template.njk" %}
-{% from "macros/hmrc-header/macro.njk"            import hmrcHeader %}
+{% from "hmrc/components/header/macro.njk"     import hmrcHeader %}
 {% from "includes/get-help-link.njk" import hmrcReportTechnicalIssue %}
 {% from "hmrc/components/timeout-dialog/macro.njk"     import hmrcTimeoutDialog %}
 
 {%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {%- set htmlLang = request.language -%}
-
 
 {% block head %}
 {{ hmrcTimeoutDialog({
@@ -23,10 +22,13 @@
       {{ messages("phaseBanner.1") }} <a class="govuk-link" href="{{ config.betaFeedbackUnauthenticatedUrl }}">{{ messages("phaseBanner.2") }}</a> {{ messages("phaseBanner.3") }}
   {% endmacro %}
 
+  {% set phaseBanner = {tag: {text: "beta"}, html: phaseBanner()} %}
+
   {{ hmrcHeader({
     homepageUrl: "https://www.gov.uk",
     serviceName: messages("site.service_name"),
     serviceUrl: "/disclose-cross-border-arrangements/manual",
+    phaseBanner: phaseBanner,
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",
     signOutHref: routes.controllers.SignOutController.signOut().url
