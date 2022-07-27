@@ -36,7 +36,7 @@ class UnauthorisedControllerSpec extends SpecBase with ControllerMockFixtures {
 
       retrieveNoData()
 
-      val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad.url)
 
       val result = route(app, request).value
 
