@@ -47,6 +47,6 @@ abstract class AbstractNavigator {
 
   private[navigation] def throwRoutingError = throw new IllegalStateException("Organisation or Individual journeys must be called from a parent journey")
 
-  val indexRoute: Call = controllers.routes.IndexController.onPageLoad()
+  val indexRoute: Call = controllers.routes.IndexController.onPageLoad
 
 }

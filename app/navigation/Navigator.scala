@@ -62,7 +62,7 @@ class Navigator @Inject() () {
 
     case HallmarksCheckYourAnswersPage => _ => id => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad(id))
 
-    case _ => _ => _ => _ => Some(routes.IndexController.onPageLoad())
+    case _ => _ => _ => _ => Some(routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Int => Request[AnyContent] => Option[Call] = {
@@ -117,12 +117,12 @@ class Navigator @Inject() () {
     case NormalMode =>
       normalRoutes(page)(userAnswers)(id)(request) match {
         case Some(call) => call
-        case None       => routes.SessionExpiredController.onPageLoad()
+        case None       => routes.SessionExpiredController.onPageLoad
       }
     case CheckMode =>
       checkRouteMap(page)(userAnswers)(id)(request) match {
         case Some(call) => call
-        case None       => routes.SessionExpiredController.onPageLoad()
+        case None       => routes.SessionExpiredController.onPageLoad
 
       }
   }

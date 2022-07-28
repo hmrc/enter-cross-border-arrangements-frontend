@@ -59,7 +59,7 @@ class NavigatorForTaxpayer @Inject() () extends AbstractNavigator {
             _ =>
               checkRoute.mode match {
                 case NormalMode => indexRoute
-                case CheckMode  => controllers.routes.IndexController.onPageLoad()
+                case CheckMode  => controllers.routes.IndexController.onPageLoad
               }
 
   }
