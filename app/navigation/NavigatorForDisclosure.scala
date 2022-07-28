@@ -71,7 +71,7 @@ class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
             _ =>
               disclosureType match {
                 case None | Some(Dac6rep) => routes.DisclosureCheckYourAnswersController.onPageLoad()
-                case Some(Dac6del)        => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad()
+                case Some(Dac6del)        => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad
               }
 
     case DisclosureMarketablePage =>
@@ -90,7 +90,7 @@ class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
             _ =>
               id match {
                 case Some(n) => controllers.routes.DisclosureDetailsController.onPageLoad(n)
-                case None    => controllers.routes.IndexController.onPageLoad()
+                case None    => controllers.routes.IndexController.onPageLoad
               }
 
     case DisclosureDeleteCheckYourAnswersPage =>
@@ -98,6 +98,6 @@ class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
   }
 
   val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call =
-    _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad()
+    _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad
 
 }
