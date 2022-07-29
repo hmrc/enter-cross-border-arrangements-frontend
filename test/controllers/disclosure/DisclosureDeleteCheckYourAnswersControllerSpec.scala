@@ -44,8 +44,8 @@ import scala.concurrent.Future
 
 class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
-  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
+  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad.url
+  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad.url
 
   val mockEmailConnector: EmailConnector                                     = mock[EmailConnector]
   val mockEmailService: EmailService                                         = mock[EmailService]

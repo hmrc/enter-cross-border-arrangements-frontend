@@ -327,7 +327,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -341,7 +341,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
     }
 
     "must return RuntimeException if disclosure type is missing or not replace or delete" in {
@@ -356,7 +356,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
   }
