@@ -36,7 +36,7 @@ class AccessibilityControllerSpec extends SpecBase with ControllerMockFixtures {
 
       retrieveNoData()
 
-      val request = FakeRequest(GET, routes.AccessibilityController.onPageLoad.url)
+      val request = FakeRequest(GET, routes.AccessibilityController.onPageLoad().url)
 
       val result = route(app, request).value
 

@@ -148,7 +148,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
 
         navigator
           .routeMap(ReplaceOrDeleteADisclosurePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6del))(0)
-          .mustBe(controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad)
+          .mustBe(controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad())
       }
 
     "must go from 'Task list' page " +
@@ -156,7 +156,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
 
         navigator
           .routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0)
-          .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad)
+          .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad())
       }
   }
 }

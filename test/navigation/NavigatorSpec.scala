@@ -60,7 +60,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(UnknownPage, 0, NormalMode, answers)
-              .mustBe(routes.IndexController.onPageLoad)
+              .mustBe(routes.IndexController.onPageLoad())
         }
       }
 
@@ -141,7 +141,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(UpdateTaxpayerPage, 0, NormalMode, updatedAnswers)
-                .mustBe(controllers.routes.IndexController.onPageLoad)
+                .mustBe(controllers.routes.IndexController.onPageLoad())
           }
         }
 
@@ -161,7 +161,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(UpdateTaxpayerPage, 0, NormalMode, updatedAnswers)
-                .mustBe(controllers.routes.IndexController.onPageLoad)
+                .mustBe(controllers.routes.IndexController.onPageLoad())
           }
         }
 
