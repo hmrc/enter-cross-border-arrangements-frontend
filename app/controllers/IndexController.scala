@@ -38,7 +38,7 @@ class IndexController @Inject() (
     implicit request =>
       request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)) match {
         case Some(unsubmittedDisclosures) if filteredDisclosures(unsubmittedDisclosures).nonEmpty =>
-          Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
+          Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad.url)
         case _ =>
           Redirect(controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url)
       }

@@ -47,7 +47,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
     sealed class Harness(authAction: IdentifierAction, controllerComponents: MessagesControllerComponents = mockMcc)
         extends FrontendController(controllerComponents) {
 
-      def onPageLoad(): Action[AnyContent] = authAction {
+      def onPageLoad: Action[AnyContent] = authAction {
         request => Results.Ok(s"Identifier: ${request.identifier}, EnrolmentID: ${request.enrolmentID}")
       }
     }
@@ -71,7 +71,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect the user to log in " in {
         val controller = Harness.failure(new MissingBearerToken)
-        val result     = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -83,7 +83,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect the user to log in " in {
         val controller = Harness.failure(new BearerTokenExpired)
-        val result     = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -95,7 +95,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect the user to the unauthorised page" in {
         val controller = Harness.failure(new InsufficientEnrolments)
-        val result     = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -107,7 +107,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect the user to the unauthorised page" in {
         val controller = Harness.failure(new InsufficientConfidenceLevel)
-        val result     = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -119,7 +119,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect the user to the unauthorised page" in {
         val controller = Harness.failure(new UnsupportedAuthProvider)
-        val result     = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -131,7 +131,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect the user to the unauthorised page" in {
         val controller = Harness.failure(new UnsupportedAffinityGroup)
-        val result     = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -143,7 +143,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect the user to the unauthorised page" in {
         val controller = Harness.failure(new UnsupportedCredentialRole)
-        val result     = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 

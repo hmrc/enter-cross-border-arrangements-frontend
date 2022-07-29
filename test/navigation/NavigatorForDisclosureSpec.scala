@@ -43,7 +43,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
         "to 'You have X unsubmitted disclosure(s)' page when the list have at least one item to display" in {
           navigator
             .routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(true))(0)
-            .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad())
+            .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad)
         }
 
       "must go from 'Are you sure you want to remove disclosure *disclosureName*' page " +
@@ -78,7 +78,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
 
           navigator
             .routeMap(DisclosureMarketablePage)(DefaultRouting(NormalMode))(None)(Some(true))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
+            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad)
         }
     }
 
@@ -115,7 +115,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
 
         navigator
           .routeMap(DisclosureIdentifyArrangementPage)(DefaultRouting(NormalMode))(None)(Some("FRA20210101ABC123"))(0)
-          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
+          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad)
       }
 
     "must go from 'Which disclosure do you want to replace?' page " +
@@ -124,7 +124,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
 
         navigator
           .routeMap(ReplaceOrDeleteADisclosurePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6rep))(0)
-          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
+          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad)
       }
 
     "must go from 'Disclosure check your answers' page" +
@@ -139,7 +139,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
       "to 'Your disclosure has been deleted' page" in {
         navigator
           .routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0)
-          .mustBe(controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad())
+          .mustBe(controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad)
       }
 
     "must go from 'Which disclosure do you want to delete?' page " +
@@ -148,7 +148,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
 
         navigator
           .routeMap(ReplaceOrDeleteADisclosurePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6del))(0)
-          .mustBe(controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad())
+          .mustBe(controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad)
       }
 
     "must go from 'Task list' page " +
@@ -156,7 +156,7 @@ class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite wi
 
         navigator
           .routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0)
-          .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad())
+          .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad)
       }
   }
 }

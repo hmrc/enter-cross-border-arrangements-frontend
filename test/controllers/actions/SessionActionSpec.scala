@@ -30,7 +30,7 @@ class SessionActionSpec extends SpecBase with ControllerMockFixtures {
 
   class Harness(action: IdentifierAction) {
 
-    def onPageLoad() = action {
+    def onPageLoad = action {
       request => Results.Ok
     }
   }
@@ -49,7 +49,7 @@ class SessionActionSpec extends SpecBase with ControllerMockFixtures {
 
         val controller = new Harness(sessionAction)
 
-        val result = controller.onPageLoad()(fakeRequest)
+        val result = controller.onPageLoad(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get must startWith(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -70,7 +70,7 @@ class SessionActionSpec extends SpecBase with ControllerMockFixtures {
 
         val request = fakeRequest.withSession(SessionKeys.sessionId -> "foo")
 
-        val result = controller.onPageLoad()(request)
+        val result = controller.onPageLoad(request)
 
         status(result) mustBe OK
       }

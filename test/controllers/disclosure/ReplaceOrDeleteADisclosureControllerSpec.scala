@@ -154,7 +154,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
     }
 
     "must display id validation errors if arrangement ID is not found" in {
