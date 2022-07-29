@@ -12,7 +12,7 @@
   countdown: config.countdown,
   keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
   signOutUrl: routes.controllers.SignOutController.signOut().url,
-  timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad().url
+  timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad.url
 }) }}
   {% include "includes/head.njk" %}
 {% endblock %}

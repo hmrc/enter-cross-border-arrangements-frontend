@@ -60,7 +60,7 @@ class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
           value =>
             _ =>
               value match {
-                case Some(true) => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+                case Some(true) => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad
                 case _          => Call("GET", appConfig.discloseArrangeLink)
               }
 
@@ -70,18 +70,18 @@ class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
           disclosureType =>
             _ =>
               disclosureType match {
-                case None | Some(Dac6rep) => routes.DisclosureCheckYourAnswersController.onPageLoad()
+                case None | Some(Dac6rep) => routes.DisclosureCheckYourAnswersController.onPageLoad
                 case Some(Dac6del)        => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad
               }
 
     case DisclosureMarketablePage =>
-      _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
+      _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad
 
     case DisclosureIdentifyArrangementPage =>
-      _ => _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
+      _ => _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad
 
     case DisclosureDetailsPage =>
-      _ => _ => _ => _ => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+      _ => _ => _ => _ => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad
 
     case DisclosureCheckYourAnswersPage =>
       _ =>
@@ -94,7 +94,7 @@ class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
               }
 
     case DisclosureDeleteCheckYourAnswersPage =>
-      _ => _ => _ => _ => controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad()
+      _ => _ => _ => _ => controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad
   }
 
   val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call =

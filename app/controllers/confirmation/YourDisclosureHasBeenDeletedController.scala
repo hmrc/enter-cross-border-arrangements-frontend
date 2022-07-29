@@ -47,7 +47,7 @@ class YourDisclosureHasBeenDeletedController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
       request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
         case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), xml)) =>

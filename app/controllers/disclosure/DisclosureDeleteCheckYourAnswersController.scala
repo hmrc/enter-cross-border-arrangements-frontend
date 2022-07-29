@@ -59,7 +59,7 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
     with NunjucksSupport
     with RoutingSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
       if (request.userAnswers.getBase(DisclosureTypePage).isEmpty) {
         throw new DiscloseDetailsAlreadyDeletedException("Already deleted")

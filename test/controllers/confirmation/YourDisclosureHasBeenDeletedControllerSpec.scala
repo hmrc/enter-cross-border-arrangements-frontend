@@ -80,7 +80,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with Controlle
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
       retrieveUserAnswersData(userAnswers)
 
-      val request        = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad().url)
+      val request        = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad.url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -114,7 +114,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with Controlle
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad.url)
 
       val result = route(app, request).value
 

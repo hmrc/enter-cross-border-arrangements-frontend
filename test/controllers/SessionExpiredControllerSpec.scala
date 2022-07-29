@@ -39,7 +39,7 @@ class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures 
 
       retrieveNoData()
 
-      val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad.url)
 
       val result            = route(app, request).value
       val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]

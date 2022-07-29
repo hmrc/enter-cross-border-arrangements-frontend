@@ -42,12 +42,12 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).get mustEqual controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url
+      redirectLocation(result).get mustEqual controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad.url
     }
 
     "must redirect to start a disclosure if all disclosures have been deleted" in {
@@ -62,7 +62,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
       val result = route(app, request).value
 
@@ -82,7 +82,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
       val result = route(app, request).value
 
@@ -97,7 +97,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
 
       retrieveNoData()
 
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
       val result = route(app, request).value
 
