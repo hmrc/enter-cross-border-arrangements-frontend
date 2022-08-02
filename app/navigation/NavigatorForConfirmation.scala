@@ -40,16 +40,16 @@ class NavigatorForConfirmation @Inject() () extends AbstractNavigator {
                 case Some(Dac6new)  => routes.NewDisclosureConfirmationController.onPageLoad(id)
                 case Some(Dac6add)  => routes.AdditionalDisclosureConfirmationController.onPageLoad(id)
                 case Some(Dac6rep)  => routes.ReplacementDisclosureConfirmationController.onPageLoad(id)
-                case Some(Dac6del)  => routes.YourDisclosureHasBeenDeletedController.onPageLoad()
+                case Some(Dac6del)  => routes.YourDisclosureHasBeenDeletedController.onPageLoad
                 case disclosureType => throw new IllegalStateException(s"Navigation to $disclosureType not yet implemented")
               }
   }
 
-  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ => _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ => _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad
 
   override private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call =
     checkRoute match {
-      case DefaultRouting(CheckMode) => controllers.routes.IndexController.onPageLoad()
+      case DefaultRouting(CheckMode) => controllers.routes.IndexController.onPageLoad
       case _                         => jumpTo
     }
 

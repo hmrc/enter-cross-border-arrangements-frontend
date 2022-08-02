@@ -21,7 +21,7 @@ class $className$ControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad.url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(application, request).value

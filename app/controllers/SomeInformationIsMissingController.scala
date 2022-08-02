@@ -42,7 +42,7 @@ class SomeInformationIsMissingController @Inject() (
       renderer
         .render(
           "someInformationIsMissing.njk",
-          Json.obj("link" -> controllers.routes.IndexController.onPageLoad().url)
+          Json.obj("link" -> controllers.routes.IndexController.onPageLoad.url)
         )
         .map(Ok(_))
   }

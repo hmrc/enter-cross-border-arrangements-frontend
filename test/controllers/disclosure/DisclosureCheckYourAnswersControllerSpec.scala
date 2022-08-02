@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val disclosureCheckYourAnswersLoadRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+  lazy val disclosureCheckYourAnswersLoadRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
 
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onContinue().url
 

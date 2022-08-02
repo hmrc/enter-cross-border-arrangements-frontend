@@ -54,7 +54,7 @@ class DisclosureCheckYourAnswersController @Inject() (
     with NunjucksSupport
     with RoutingSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
