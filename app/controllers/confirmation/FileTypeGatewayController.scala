@@ -66,7 +66,7 @@ class FileTypeGatewayController @Inject() (
 
       //new
       case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), _)) =>
-        emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), Some(arrangementID)), importInstruction, messageRefID)
+        emailService.sendEmail(request.contacts, GeneratedIDs(Some(arrangementID), Some(disclosureID)), importInstruction, messageRefID)
 
       // add
       case Some(GeneratedIDs(None, Some(disclosureID), Some(messageRefID), _)) =>
