@@ -73,14 +73,14 @@ class FileTypeGatewayController @Inject() (
         val details = request.userAnswers
           .get(DisclosureDetailsPage, id)
           .getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
-        emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), details.arrangementID), importInstruction, messageRefID)
+        emailService.sendEmail(request.contacts, GeneratedIDs(details.arrangementID, Some(disclosureID)), importInstruction, messageRefID)
 
       //rep
       case Some(GeneratedIDs(None, None, Some(messageRefID), _)) =>
         val details = request.userAnswers
           .get(DisclosureDetailsPage, id)
           .getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
-        emailService.sendEmail(request.contacts, GeneratedIDs(details.disclosureID, details.arrangementID), importInstruction, messageRefID)
+        emailService.sendEmail(request.contacts, GeneratedIDs(details.arrangementID, details.disclosureID), importInstruction, messageRefID)
 
       case _ => throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email.")
     }
