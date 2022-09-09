@@ -8,8 +8,6 @@ GET        /this-service-has-been-reset                 controllers.SessionExpir
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
-
 GET        /sign-out                                    controllers.SignOutController.signOut
 
 GET        /keep-alive                                  controllers.KeepAliveController.keepAlive
