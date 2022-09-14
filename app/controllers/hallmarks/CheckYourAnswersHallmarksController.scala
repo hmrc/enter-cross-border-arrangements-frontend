@@ -18,8 +18,8 @@ package controllers.hallmarks
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{NormalMode, UserAnswers}
 import models.hallmarks.{HallmarkDetails, JourneyStatus}
+import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.hallmarks.{HallmarkDetailsPage, HallmarkStatusPage, HallmarksCheckYourAnswersPage}
 import play.api.i18n.{I18nSupport, MessagesApi}

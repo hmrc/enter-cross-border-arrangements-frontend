@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Format, JsResult, JsValue, Json, OFormat}
+import play.api.libs.json._
 
 sealed trait ManualSubmissionValidationResult
 

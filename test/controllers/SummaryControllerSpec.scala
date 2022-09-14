@@ -30,7 +30,7 @@ import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
 import models.reporter.{ReporterDetails, ReporterLiability}
 import models.subscription.ContactDetails
-import models.{AddressLookup, Country, LoopDetails, Name, Submission, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
+import models.{AddressLookup, Country, LoopDetails, Name, Submission, SubmissionDetails, TaxReferenceNumbers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.affected.AffectedStatusPage

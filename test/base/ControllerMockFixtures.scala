@@ -29,7 +29,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Call}
-import play.api.test.{FakeRequest, Helpers}
+import play.api.test.FakeRequest
 import repositories.SessionRepository
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 

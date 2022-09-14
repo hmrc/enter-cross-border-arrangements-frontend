@@ -16,11 +16,11 @@
 
 package models.intermediaries
 
+import models._
 import play.api.data.{Field, Form}
 import play.api.i18n.Messages
 import play.api.libs.json._
 import uk.gov.hmrc.viewmodels._
-import models._
 
 sealed trait WhatTypeofIntermediary
 

@@ -18,7 +18,6 @@ package controllers.arrangement
 
 import controllers.actions._
 import forms.arrangement.WhatIsThisArrangementCalledFormProvider
-import javax.inject.Inject
 import models.Mode
 import models.hallmarks.JourneyStatus
 import navigation.Navigator
@@ -31,6 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatIsThisArrangementCalledController @Inject() (

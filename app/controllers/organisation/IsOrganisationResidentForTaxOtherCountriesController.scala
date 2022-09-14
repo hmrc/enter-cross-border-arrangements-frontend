@@ -20,7 +20,6 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers._
-import javax.inject.Inject
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
@@ -32,6 +31,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IsOrganisationResidentForTaxOtherCountriesController @Inject() (

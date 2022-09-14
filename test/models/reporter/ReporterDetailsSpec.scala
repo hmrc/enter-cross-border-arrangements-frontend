@@ -25,16 +25,13 @@ import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReport
 import models.taxpayer.TaxResidency
 import models.{Address, CountryList, LoopDetails, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.arrangement.ArrangementDetailsPage
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterDetailsPage, ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate

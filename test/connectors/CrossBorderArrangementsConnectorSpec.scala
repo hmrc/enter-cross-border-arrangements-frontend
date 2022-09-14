@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import models.GeneratedIDs
 import models.disclosure.IDVerificationStatus
+import org.mockito.ArgumentMatchers.any
 import org.scalacheck.Gen.alphaStr
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -30,10 +31,9 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import utils.WireMockHelper
-import org.mockito.ArgumentMatchers.any
 
 import scala.concurrent.Future
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
 class CrossBorderArrangementsConnectorSpec extends SpecBase with MockServiceApp with ScalaCheckPropertyChecks with WireMockHelper with Generators {
 

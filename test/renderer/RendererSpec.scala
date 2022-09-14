@@ -21,7 +21,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import play.api.Application
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.twirl.api.Html

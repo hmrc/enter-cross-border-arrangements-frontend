@@ -19,7 +19,7 @@ package controllers.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.OrganisationNameFormProvider
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.NavigatorForOrganisation
 import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}

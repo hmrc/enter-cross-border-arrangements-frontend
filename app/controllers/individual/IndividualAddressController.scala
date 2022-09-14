@@ -20,7 +20,6 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getIndividualName, pageHeadingProvider}
-import javax.inject.Inject
 import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualAddressPage, IndividualUkPostcodePage, IsIndividualAddressUkPage}
@@ -33,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndividualAddressController @Inject() (override val messagesApi: MessagesApi,
