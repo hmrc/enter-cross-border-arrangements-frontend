@@ -19,7 +19,7 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IndividualNameFormProvider
-import models.{Mode, Name, UserAnswers}
+import models.{Mode, Name}
 import navigation.NavigatorForIndividual
 import pages.individual.IndividualNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}

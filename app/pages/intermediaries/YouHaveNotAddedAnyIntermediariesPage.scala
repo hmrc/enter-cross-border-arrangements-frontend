@@ -18,8 +18,8 @@ package pages.intermediaries
 
 import models.UserAnswers
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import play.api.libs.json.JsPath
 import pages._
+import play.api.libs.json.JsPath
 
 import scala.util.Try
 

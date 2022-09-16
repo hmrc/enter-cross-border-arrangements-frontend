@@ -33,7 +33,6 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject

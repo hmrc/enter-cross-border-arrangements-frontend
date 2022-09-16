@@ -19,8 +19,6 @@ package controllers.reporter.taxpayer
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.taxpayer.TaxpayerWhyReportInUKFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import navigation.NavigatorForReporter
@@ -33,6 +31,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxpayerWhyReportInUKController @Inject() (

@@ -19,7 +19,6 @@ package controllers.disclosure
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureNameFormProvider
-import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForDisclosure
@@ -32,6 +31,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DisclosureNameController @Inject() (

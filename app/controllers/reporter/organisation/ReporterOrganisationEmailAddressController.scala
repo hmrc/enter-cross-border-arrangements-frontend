@@ -19,9 +19,8 @@ package controllers.reporter.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.ReporterEmailAddressFormProvider
-import javax.inject.Inject
-import models.Mode
 import helpers.JourneyHelpers._
+import models.Mode
 import navigation.NavigatorForReporter
 import pages.reporter.organisation.ReporterOrganisationEmailAddressPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -32,6 +31,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterOrganisationEmailAddressController @Inject() (

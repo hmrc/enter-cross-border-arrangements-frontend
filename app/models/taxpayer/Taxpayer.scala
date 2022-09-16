@@ -17,15 +17,14 @@
 package models.taxpayer
 
 import controllers.exceptions.SomeInformationIsMissingException
-
-import java.time.LocalDate
-import java.util.UUID
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.libs.json.{Json, OFormat}
 
+import java.time.LocalDate
+import java.util.UUID
 import scala.util.Try
 
 case class Taxpayer(taxpayerId: String,

@@ -20,7 +20,6 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.pageHeadingProvider
-import javax.inject.Inject
 import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForReporter
 import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualPostcodePage, ReporterIsIndividualAddressUKPage}
@@ -33,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterIndividualAddressController @Inject() (

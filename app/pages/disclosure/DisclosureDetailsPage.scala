@@ -17,9 +17,8 @@
 package pages.disclosure
 
 import models.UserAnswers
-import models.disclosure.DisclosureType.{Dac6add, Dac6new}
-import models.disclosure.{DisclosureDetails, ReplaceOrDeleteADisclosure}
-import pages.{MessageRefIDPage, ModelPage, QuestionPage}
+import models.disclosure.DisclosureDetails
+import pages.{ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
 import scala.util.{Success, Try}

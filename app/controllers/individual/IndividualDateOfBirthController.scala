@@ -30,11 +30,11 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.DateInput
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import utils.DateInput
 
 class IndividualDateOfBirthController @Inject() (
   override val messagesApi: MessagesApi,

@@ -18,7 +18,6 @@ package controllers.arrangement
 
 import controllers.actions._
 import forms.arrangement.WhichExpectedInvolvedCountriesArrangementFormProvider
-import javax.inject.Inject
 import models.{CountryList, Mode}
 import navigation.Navigator
 import pages.arrangement.WhichExpectedInvolvedCountriesArrangementPage
@@ -30,6 +29,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhichExpectedInvolvedCountriesArrangementController @Inject() (

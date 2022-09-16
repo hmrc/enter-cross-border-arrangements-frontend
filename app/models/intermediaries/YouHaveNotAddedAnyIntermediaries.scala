@@ -16,10 +16,10 @@
 
 package models.intermediaries
 
+import models._
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
-import models._
 
 sealed trait YouHaveNotAddedAnyIntermediaries
 

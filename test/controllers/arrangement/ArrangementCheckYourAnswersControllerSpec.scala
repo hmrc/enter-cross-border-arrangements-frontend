@@ -24,9 +24,9 @@ import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
+import pages.GiveDetailsOfThisArrangementPage
 import pages.arrangement._
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.GiveDetailsOfThisArrangementPage
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

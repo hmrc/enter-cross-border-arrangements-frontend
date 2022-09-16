@@ -19,7 +19,6 @@ package controllers.reporter.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.individual.ReporterIsIndividualAddressUKFormProvider
-import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForReporter
 import pages.reporter.individual.ReporterIsIndividualAddressUKPage
@@ -31,6 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterIsIndividualAddressUKController @Inject() (

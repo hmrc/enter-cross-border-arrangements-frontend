@@ -16,8 +16,8 @@
 
 package navigation
 
-import controllers.mixins.{AffectedRouting, AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, IntermediariesRouting, TaxpayersRouting}
-import models.{CheckMode, NormalMode}
+import controllers.mixins._
+import models.CheckMode
 import pages.Page
 import play.api.mvc.Call
 
