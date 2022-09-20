@@ -17,8 +17,6 @@
 package models.reporter
 
 import controllers.exceptions.SomeInformationIsMissingException
-
-import java.time.LocalDate
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
@@ -27,6 +25,8 @@ import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.libs.json.{Json, OFormat}
+
+import java.time.LocalDate
 
 case class ReporterLiability(role: String,
                              nexus: Option[String] = None,

@@ -16,10 +16,10 @@
 
 package pages.arrangement
 
-import java.time.LocalDate
-
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import java.time.LocalDate
 
 case object WhatIsTheImplementationDatePage extends QuestionPage[LocalDate] {
 

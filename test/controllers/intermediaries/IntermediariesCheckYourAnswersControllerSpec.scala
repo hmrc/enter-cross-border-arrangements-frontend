@@ -30,7 +30,6 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, route, status, _}
 import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 
 import scala.concurrent.Future
 

@@ -21,7 +21,6 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.PostcodeFormProvider
 import helpers.JourneyHelpers.getIndividualName
-import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForIndividual
 import pages.AddressLookupPage
@@ -35,6 +34,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndividualPostcodeController @Inject() (

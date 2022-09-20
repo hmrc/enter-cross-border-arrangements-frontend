@@ -19,6 +19,7 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.AssociatedEnterpriseTypeFormProvider
+import models.hallmarks.JourneyStatus
 import models.{Mode, NormalMode, SelectType, UserAnswersHelper}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.{AssociatedEnterpriseStatusPage, AssociatedEnterpriseTypePage}
@@ -31,8 +32,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import javax.inject.Inject
-import models.hallmarks.JourneyStatus
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class AssociatedEnterpriseTypeController @Inject() (

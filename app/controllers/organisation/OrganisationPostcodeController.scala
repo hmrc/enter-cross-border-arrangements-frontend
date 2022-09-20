@@ -23,7 +23,9 @@ import forms.PostcodeFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import models.Mode
 import navigation.NavigatorForOrganisation
+import pages.AddressLookupPage
 import pages.organisation.PostcodePage
+import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -31,10 +33,8 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import javax.inject.Inject
-import pages.AddressLookupPage
-import play.api.data.FormError
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationPostcodeController @Inject() (

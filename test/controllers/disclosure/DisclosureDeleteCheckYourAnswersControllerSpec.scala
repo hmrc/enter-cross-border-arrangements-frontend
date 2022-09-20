@@ -25,7 +25,6 @@ import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{Country, Currency, GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.BeforeAndAfterEach
 import pages.disclosure.{DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind

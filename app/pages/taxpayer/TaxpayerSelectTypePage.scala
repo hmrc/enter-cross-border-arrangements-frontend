@@ -18,8 +18,8 @@ package pages.taxpayer
 
 import models.SelectType
 import models.taxpayer.Taxpayer
-import play.api.libs.json.JsPath
 import pages.{CleanUpSelectTypePage, DetailsPage}
+import play.api.libs.json.JsPath
 
 case object TaxpayerSelectTypePage extends DetailsPage[SelectType, Taxpayer] with CleanUpSelectTypePage {
 

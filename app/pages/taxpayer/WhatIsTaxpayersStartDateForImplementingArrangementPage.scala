@@ -16,11 +16,11 @@
 
 package pages.taxpayer
 
-import java.time.LocalDate
-
 import models.taxpayer.Taxpayer
 import pages._
 import play.api.libs.json.JsPath
+
+import java.time.LocalDate
 
 case object WhatIsTaxpayersStartDateForImplementingArrangementPage extends DetailsPage[LocalDate, Taxpayer] {
 

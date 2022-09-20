@@ -18,8 +18,6 @@ package controllers.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.RemoveTaxpayerFormProvider
-
-import javax.inject.Inject
 import models.UserAnswers
 import models.enterprises.AssociatedEnterprise
 import pages.enterprises.AssociatedEnterpriseLoopPage
@@ -32,6 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveTaxpayerController @Inject() (

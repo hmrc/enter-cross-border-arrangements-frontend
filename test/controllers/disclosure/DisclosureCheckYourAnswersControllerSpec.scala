@@ -17,7 +17,6 @@
 package controllers.disclosure
 
 import base.{ControllerMockFixtures, SpecBase}
-import connectors.CrossBorderArrangementsConnector
 import controllers.RowJsonReads
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{UnsubmittedDisclosure, UserAnswers}

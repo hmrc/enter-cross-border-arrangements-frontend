@@ -20,8 +20,6 @@ import base.{MockServiceApp, SpecBase}
 import helpers.Submissions
 import helpers.xml.GeneratedXMLExamples
 
-import scala.xml.{Elem, NodeSeq}
-
 class TransformationServiceSpec extends SpecBase with MockServiceApp {
 
   val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)

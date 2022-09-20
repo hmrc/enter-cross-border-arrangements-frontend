@@ -18,6 +18,7 @@ package controllers.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
+import models.hallmarks.JourneyStatus
 import models.{Mode, NormalMode, SelectType, UserAnswersHelper}
 import navigation.Navigator
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerSelectTypePage}
@@ -30,8 +31,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import javax.inject.Inject
-import models.hallmarks.JourneyStatus
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxpayerSelectTypeController @Inject() (

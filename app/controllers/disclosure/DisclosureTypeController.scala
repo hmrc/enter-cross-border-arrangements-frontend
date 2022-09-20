@@ -20,6 +20,7 @@ import connectors.HistoryConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureTypeFormProvider
+import handlers.ErrorHandler
 import models.Mode
 import models.disclosure.DisclosureType
 import navigation.NavigatorForDisclosure
@@ -31,7 +32,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import handlers.ErrorHandler
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
