@@ -120,7 +120,7 @@ class ReplaceOrDeleteADisclosureController @Inject() (
                   renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
                 } else
                   for {
-                    disclosureDetail <- historyConnector.getSubmissionDetailForDisclosure(value.disclosureID)
+                    disclosureDetail <- historyConnector.getSubmissionDetailForDisclosure(value.disclosureID.toUpperCase)
                     updatedAnswers   <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, value))
                     updatedAnswers1  <- Future.fromTry(updatedAnswers.setBase(InitialDisclosureMAPage, disclosureDetail.initialDisclosureMA))
                     _                <- sessionRepository.set(updatedAnswers1)
