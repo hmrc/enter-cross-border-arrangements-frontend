@@ -21,5 +21,11 @@ import play.api.libs.json._
 case class ReplaceOrDeleteADisclosure(arrangementID: String, disclosureID: String)
 
 object ReplaceOrDeleteADisclosure {
-  implicit val format = Json.format[ReplaceOrDeleteADisclosure]
+  implicit val reads: Reads[ReplaceOrDeleteADisclosure] = Json.reads[ReplaceOrDeleteADisclosure]
+
+  implicit val writes: Writes[ReplaceOrDeleteADisclosure] =
+    Json.writes[ReplaceOrDeleteADisclosure].contramap {
+      disclosure =>
+        ReplaceOrDeleteADisclosure(disclosure.arrangementID.toUpperCase, disclosure.disclosureID.toUpperCase)
+    }
 }
