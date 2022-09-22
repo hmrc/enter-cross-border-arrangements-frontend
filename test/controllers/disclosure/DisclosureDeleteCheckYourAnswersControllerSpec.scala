@@ -189,25 +189,29 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure/disclosure-has-been-deleted"
     }
 
-    "fail with DiscloseDetailsAlreadyDeletedException if DisclosureTypePage is empty " in {
+    "must redirect to your disclosure has been deleted if disclosureType page is empty" in {
+      val userAnswers = UserAnswers(userAnswersId)
 
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success
-        .value
-        .setBase(DisclosureNamePage, "My arrangement")
-        .success
-        .value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[FrontendAppConfig].toInstance(mockAppConfig),
+          bind[CountryListFactory].toInstance(mockCountryFactory),
+          bind[CurrencyListFactory].toInstance(mockCurrencyList),
+          bind[XMLGenerationService].toInstance(mockXMLGenerationService)
+        )
+        .build()
 
       retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, disclosureCheckYourAnswersLoadRoute)
 
-      val result = route(app, request).value
+      val result = route(application, request).value
 
-      an[DiscloseDetailsAlreadyDeletedException] mustBe thrownBy {
-        status(result) mustEqual OK
-      }
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure-already-deleted"
     }
   }
 
