@@ -43,8 +43,8 @@ trait ModelGenerators {
   implicit lazy val arbitraryReplaceOrDeleteADisclosure: Arbitrary[ReplaceOrDeleteADisclosure] =
     Arbitrary {
       for {
-        arrangementID <- arbitrary[String]
-        disclosureID  <- arbitrary[String]
+        arrangementID <- arbitrary[String].map(_.toUpperCase)
+        disclosureID  <- arbitrary[String].map(_.toUpperCase)
       } yield ReplaceOrDeleteADisclosure(arrangementID, disclosureID)
     }
 
