@@ -19,7 +19,7 @@ package controllers.disclosure
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.exceptions.{DiscloseDetailsAlreadyDeletedException, DisclosureInformationIsMissingException}
+import controllers.exceptions.DisclosureInformationIsMissingException
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.JourneyHelpers.linkToHomePageText
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -61,25 +61,28 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-      if (request.userAnswers.getBase(DisclosureTypePage).isEmpty) {
-        throw new DiscloseDetailsAlreadyDeletedException("Already deleted")
-      }
+      request.userAnswers
+        .getBase(DisclosureTypePage)
+        .fold {
+          Future.successful(Redirect(controllers.routes.DisclosureAlreadySentController.onDeleted()))
+        } {
+          _ =>
+            val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
+            val disclosureSummary: Seq[SummaryList.Row] =
+              helper.disclosureNamePage.toSeq ++
+                helper.buildDisclosureSummaryDetails
 
-      val disclosureSummary: Seq[SummaryList.Row] =
-        helper.disclosureNamePage.toSeq ++
-          helper.buildDisclosureSummaryDetails
-
-      renderer
-        .render(
-          "disclosure/check-your-answers-delete-disclosure.njk",
-          Json.obj(
-            "disclosureSummary" -> disclosureSummary,
-            "homePageLink"      -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text")
-          )
-        )
-        .map(Ok(_))
+            renderer
+              .render(
+                "disclosure/check-your-answers-delete-disclosure.njk",
+                Json.obj(
+                  "disclosureSummary" -> disclosureSummary,
+                  "homePageLink"      -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text")
+                )
+              )
+              .map(Ok(_))
+        }
   }
 
   def onContinue(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {

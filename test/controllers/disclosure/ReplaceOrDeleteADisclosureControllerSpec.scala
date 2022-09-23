@@ -359,5 +359,19 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
+
+    "must redirect to your disclosure has been deleted if disclosureType page is empty" in {
+
+      val application = applicationBuilder(userAnswers = Some(UserAnswers(userAnswersId)))
+        .build()
+
+      val request = FakeRequest(GET, replaceOrDeleteADisclosureRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure-already-deleted"
+    }
   }
 }

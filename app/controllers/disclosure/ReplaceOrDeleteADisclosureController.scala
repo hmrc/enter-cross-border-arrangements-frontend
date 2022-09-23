@@ -18,11 +18,10 @@ package controllers.disclosure
 
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector}
 import controllers.actions._
-import controllers.exceptions.DiscloseDetailsAlreadyDeletedException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import handlers.ErrorHandler
-import models.disclosure.DisclosureType.{Dac6del, Dac6rep}
+import models.disclosure.DisclosureType.Dac6rep
 import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
 import models.{Country, Mode, UserAnswers}
 import navigation.NavigatorForDisclosure
@@ -65,25 +64,29 @@ class ReplaceOrDeleteADisclosureController @Inject() (
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form                    = formProvider(countries)
 
-      try {
-        val replaceorDelete = replaceOrDelete(request.userAnswers)
+      val replaceorDelete = replaceOrDelete(request.userAnswers)
 
-        val preparedForm = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+      val preparedForm = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      val json = Json.obj(
+        "form"               -> preparedForm,
+        "mode"               -> mode,
+        "arrangementIDLabel" -> arrangementIDLabel,
+        "replaceOrDelete"    -> replaceorDelete
+      )
+
+      request.userAnswers
+        .getBase(DisclosureTypePage)
+        .fold {
+          Future.successful(Redirect(controllers.routes.DisclosureAlreadySentController.onDeleted()))
+        } {
+          _ =>
+            renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(Ok(_))
         }
 
-        val json = Json.obj(
-          "form"               -> preparedForm,
-          "mode"               -> mode,
-          "arrangementIDLabel" -> arrangementIDLabel,
-          "replaceOrDelete"    -> replaceorDelete
-        )
-
-        renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(Ok(_))
-      } catch {
-        case ex: Exception => errorHandler.onServerError(request, ex)
-      }
   }
 
   def redirect(checkRoute: CheckRoute, disclosureType: Option[DisclosureType]): Call =
@@ -158,7 +161,6 @@ class ReplaceOrDeleteADisclosureController @Inject() (
 
   private def replaceOrDelete(userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Boolean = userAnswers.getBase(DisclosureTypePage) match {
     case Some(Dac6rep) => true
-    case Some(Dac6del) => false
-    case _             => throw new DiscloseDetailsAlreadyDeletedException("Disclosure type should only be replace or delete")
+    case _             => false
   }
 }
