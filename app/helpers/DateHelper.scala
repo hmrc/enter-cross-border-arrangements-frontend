@@ -34,11 +34,13 @@ object DateHelper {
   val dateFormatterForXML: DateTimeFormatter          = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss")
   def formatXMLTimeStamp(date: LocalDateTime): String = date.format(dateFormatterForXML)
 
+  //Locale US so that AM/PM appear in capitals after JDK 11 upgrade
+
   private def summaryTimestampFormatter(dayOfWeek: String): DateTimeFormatter =
-    DateTimeFormatter.ofPattern(s"h:mma 'on' '$dayOfWeek' d MMMM yyyy", Locale.UK)
+    DateTimeFormatter.ofPattern(s"h:mma 'on' '$dayOfWeek' d MMMM yyyy", Locale.US)
 
   def getSummaryTimestamp(dateTime: ZonedDateTime): String = {
-    val str    = summaryTimestampFormatter(dateTime.getDayOfWeek.getDisplayName(TextStyle.FULL, Locale.UK)).format(dateTime)
+    val str    = summaryTimestampFormatter(dateTime.getDayOfWeek.getDisplayName(TextStyle.FULL, Locale.US)).format(dateTime)
     val suffix = str.takeRight(2)
     val prefix = str.take(str.length - 2)
     prefix + suffix

@@ -98,7 +98,7 @@ class EmailConnectorSpec extends SpecBase with MockServiceApp with WireMockServe
       post(urlEqualTo(expectedUrl))
         .willReturn(
           aResponse()
-            .withFault(Fault.CONNECTION_RESET_BY_PEER)
+            .withFault(Fault.RANDOM_DATA_THEN_CLOSE)
         )
     )
 }
