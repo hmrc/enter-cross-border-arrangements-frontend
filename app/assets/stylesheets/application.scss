@@ -26,3 +26,10 @@ $hmrc-assets-path: "/disclose-cross-border-arrangements/manual/assets/lib/hmrc-f
 svg.autocomplete__dropdown-arrow-down {
   pointer-events: none;
 }
+
+body:not(.js-enabled) .js-enabled {
+  display: none;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
