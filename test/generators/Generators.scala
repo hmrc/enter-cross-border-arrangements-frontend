@@ -167,5 +167,4 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       )
     } yield s"$pt1$pt2$pt3 $pt4$pt5a$pt5b"
   }
-
 }

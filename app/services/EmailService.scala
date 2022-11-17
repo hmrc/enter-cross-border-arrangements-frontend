@@ -17,10 +17,10 @@
 package services
 
 import connectors.EmailConnector
+import utils.RegexConstants
 import models.{EmailRequest, GeneratedIDs}
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
-import uk.gov.hmrc.emailaddress.EmailAddress
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import javax.inject.{Inject, Singleton}
 import models.subscription.ContactDetails
@@ -28,7 +28,7 @@ import models.subscription.ContactDetails
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailService @Inject() (emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) {
+class EmailService @Inject() (emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) extends RegexConstants {
 
   def sendEmail(contacts: Option[ContactDetails], ids: GeneratedIDs, importInstruction: String, messageRefID: String)(implicit
     hc: HeaderCarrier
@@ -50,7 +50,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit execution
 
             for {
               primaryResponse <- emailAddress
-                .filter(EmailAddress.isValid)
+                .filter(emailRegex.r.matches)
                 .fold(Future.successful(Option.empty[HttpResponse])) {
                   email =>
                     emailConnector
@@ -61,7 +61,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit execution
                 }
 
               _ <- secondaryEmailAddress
-                .filter(EmailAddress.isValid)
+                .filter(emailRegex.r.matches)
                 .fold(Future.successful(Option.empty[HttpResponse])) {
                   secondaryEmailAddress =>
                     emailConnector
