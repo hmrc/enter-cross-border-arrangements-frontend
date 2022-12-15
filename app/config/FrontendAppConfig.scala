@@ -23,8 +23,8 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-  private val contactHost                  = configuration.get[String]("contact-frontend.host")
-  private val contactFormServiceIdentifier = "DAC6"
+  val contactHost                  = configuration.get[String]("contact-frontend.host")
+  val contactFormServiceIdentifier = "DAC6"
 
   lazy val countryCodeJson: String        = configuration.get[String]("json.countries")
   lazy val currencyCodeJson: String       = configuration.get[String]("json.currencies")
