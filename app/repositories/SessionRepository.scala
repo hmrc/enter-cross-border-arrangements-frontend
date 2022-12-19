@@ -26,7 +26,7 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 object DefaultSessionRepository {
@@ -38,6 +38,7 @@ object DefaultSessionRepository {
   )
 }
 
+@Singleton
 class DefaultSessionRepository @Inject() (mongo: MongoComponent, config: Configuration)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[UserAnswers](
       mongoComponent = mongo,

@@ -20,8 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.DefaultRouting
+import models.disclosure.DisclosureDetails
 import models.requests.DataRequestWithContacts
-import models.{GeneratedIDs, NormalMode}
+import models.{GeneratedIDs, NormalMode, UserAnswers}
 import navigation.NavigatorForConfirmation
 import org.slf4j.LoggerFactory
 import pages.GeneratedIDPage
@@ -70,18 +71,29 @@ class FileTypeGatewayController @Inject() (
 
       // add
       case Some(GeneratedIDs(None, Some(disclosureID), Some(messageRefID), _)) =>
-        val details = request.userAnswers
-          .get(DisclosureDetailsPage, id)
-          .getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
+        val details = retrieveDisclosureId(request.userAnswers, id)
         emailService.sendEmail(request.contacts, GeneratedIDs(details.arrangementID, Some(disclosureID)), importInstruction, messageRefID)
 
       //rep
       case Some(GeneratedIDs(None, None, Some(messageRefID), _)) =>
-        val details = request.userAnswers
-          .get(DisclosureDetailsPage, id)
-          .getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
+        val details = retrieveDisclosureId(request.userAnswers, id)
         emailService.sendEmail(request.contacts, GeneratedIDs(details.arrangementID, details.disclosureID), importInstruction, messageRefID)
 
-      case _ => throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email.")
+      case Some(GeneratedIDs(_, _, None, _)) =>
+        logger.warn(s"FileGateWayController: Generated Ids does not contain the MessageRefID id: $id")
+        throw new IllegalStateException("DisclosureID or ArrangementID or MessageRefID cannot be found for email.")
+      case Some(_) =>
+        logger.warn(s"FileGateWayController: Generated Ids does not contain the DisclosureID or MessageRefID id: $id")
+        throw new IllegalStateException("DisclosureID or ArrangementID or MessageRefID cannot be found for email.")
+      case None =>
+        logger.warn(s"FileGateWayController: GeneratedIds cannot retreived from user answers  id: $id")
+        throw new IllegalStateException("GeneratedIDs cannot be found for the email.")
     }
+
+  private def retrieveDisclosureId(userAnswers: UserAnswers, id: Int): DisclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
+    case Some(disclosureId) => disclosureId
+    case None =>
+      logger.warn(s"FileGateWayController: Cannot retrieve disclosureID from UserAnswers id: $id")
+      throw new IllegalStateException("DisclosureID or ArrangementID or MessageRefID cannot be found for email.")
+  }
 }
