@@ -41,7 +41,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.XMLGenerationService
+import services.{EmailService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -60,7 +60,8 @@ class DisclosureDetailsController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   navigator: NavigatorForDisclosure,
   renderer: Renderer,
-  sessionRepository: SessionRepository
+  sessionRepository: SessionRepository,
+  emailService: EmailService
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -99,7 +100,7 @@ class DisclosureDetailsController @Inject() (
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-      val submission = Submission(request.userAnswers, id, request.enrolmentID)
+      val submission: Submission = Submission(request.userAnswers, id, request.enrolmentID)
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
         _.fold(
@@ -112,7 +113,9 @@ class DisclosureDetailsController @Inject() (
             for {
               updatedUserAnswersWithSubmission <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, updatedIds))
               updatedUserAnswersWithFlags      <- Future.fromTry(updateFlags(updatedUserAnswersWithSubmission, id))
+              _                                <- emailService.processEmail(submission.disclosureDetails, updatedIds)
               _                                <- sessionRepository.set(updatedUserAnswersWithFlags)
+
             } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
         )
       }
