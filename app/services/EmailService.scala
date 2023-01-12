@@ -17,18 +17,48 @@
 package services
 
 import connectors.EmailConnector
-import utils.RegexConstants
+import models.disclosure.DisclosureDetails
+import models.requests.DataRequestWithContacts
+import models.subscription.ContactDetails
 import models.{EmailRequest, GeneratedIDs}
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
+import org.slf4j.LoggerFactory
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import javax.inject.{Inject, Singleton}
-import models.subscription.ContactDetails
+import utils.RegexConstants
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailService @Inject() (emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) extends RegexConstants {
+
+  private val logger = LoggerFactory.getLogger(getClass)
+
+  def processEmail(details: DisclosureDetails, ids: GeneratedIDs)(implicit
+    request: DataRequestWithContacts[_],
+    hc: HeaderCarrier
+  ): Future[Option[HttpResponse]] = ids match {
+
+    //new
+    case GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), _) =>
+      sendEmail(request.contacts, GeneratedIDs(Some(arrangementID), Some(disclosureID)), details.disclosureType.toString, messageRefID)
+
+    // add
+    case GeneratedIDs(None, Some(disclosureID), Some(messageRefID), _) =>
+      sendEmail(request.contacts, GeneratedIDs(details.arrangementID, Some(disclosureID)), details.disclosureType.toString, messageRefID)
+
+    //rep
+    case GeneratedIDs(None, None, Some(messageRefID), _) =>
+      sendEmail(request.contacts, GeneratedIDs(details.arrangementID, details.disclosureID), details.disclosureType.toString, messageRefID)
+
+    case GeneratedIDs(_, _, None, _) =>
+      logger.warn(s"EmailService: Generated Ids does not contain the MessageRefID")
+      Future.successful(None)
+    case _ =>
+      logger.warn(s"EmailService: Generated Ids does not contain the DisclosureID or MessageRefID")
+      Future.successful(None)
+  }
 
   def sendEmail(contacts: Option[ContactDetails], ids: GeneratedIDs, importInstruction: String, messageRefID: String)(implicit
     hc: HeaderCarrier
