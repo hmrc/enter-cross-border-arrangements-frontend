@@ -66,7 +66,7 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "disclosureAlreadySent.njk"
+      templateCaptor.getValue mustEqual "informationSent.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "disclosureAlreadySent.njk"
+      templateCaptor.getValue mustEqual "informationSent.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -136,7 +136,7 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "disclosureAlreadySent.njk"
+      templateCaptor.getValue mustEqual "informationSent.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -171,7 +171,7 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "disclosureAlreadySent.njk"
+      templateCaptor.getValue mustEqual "informationSent.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
