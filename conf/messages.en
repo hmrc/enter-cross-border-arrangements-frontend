@@ -1223,3 +1223,7 @@ disclosureAlreadySent.option.deleted = deleted
 someInformationIsMissing.title = Some information is missing
 someInformationIsMissing.heading = Some information is missing
 someInformationIsMissing.p1 = You must complete all sections before sending your disclosure.
+
+informationSent.title = Information Sent
+informationSent.heading = Information Sent
+informationSent.p1 = We will contact you if we have any questions about the details you have provided.
