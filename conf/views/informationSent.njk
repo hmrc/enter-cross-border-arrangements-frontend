@@ -4,16 +4,9 @@
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 
 {% block pageTitle %}
-  {{ title(messages("disclosureAlreadySent.title", messages("disclosureAlreadySent.option."+option))) }}
+  {{ title(messages("informationSent.title")) }}
 {% endblock %}
 
-{% block beforeContent %}
-  {{ govukBackLink({
-    text: messages("site.back"),
-     classes: "js-enabled",
-    href: backLinkUrl
-  }) }}
-{% endblock %}
 
 {% block mainContent %}
 
@@ -21,9 +14,13 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="govuk-heading-l">
-          {{ messages("disclosureAlreadySent.heading", messages("disclosureAlreadySent.option."+option)) }}
+        <h1 class="govuk-heading-xl">
+          {{ messages("informationSent.heading") }}
         </h1>
+
+        <div>
+        <p class="govuk-body">{{ messages("informationSent.p1") }}
+        </div>
 
         <p class="govuk-body">{{ homePageLink | safe }}</p>
 

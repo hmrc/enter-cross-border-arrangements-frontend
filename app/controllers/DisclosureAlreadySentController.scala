@@ -53,7 +53,7 @@ class DisclosureAlreadySentController @Inject() (
 
       renderer
         .render(
-          "disclosureAlreadySent.njk",
+          "informationSent.njk",
           Json.obj(
             "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
             "option"       -> "deleted",
@@ -71,7 +71,7 @@ class DisclosureAlreadySentController @Inject() (
 
       renderer
         .render(
-          "disclosureAlreadySent.njk",
+          "informationSent.njk",
           Json.obj(
             "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
             "option"       -> "sent",
